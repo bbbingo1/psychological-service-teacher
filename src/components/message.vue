@@ -108,7 +108,6 @@ export default {
               reply: item.reply
             }
           })
-          console.log(this.tableData[0])
         }
       } catch (err) {
         ElMessage.error(err.toString());

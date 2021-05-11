@@ -141,6 +141,7 @@ export default {
             await addQuestion(form);
             // 更新题目列表
             await this.queryQuestion()
+            this.dialogFormVisible = false
             ElMessage.success('添加成功')
           } catch (err) {
             ElMessage.error(err.toString());
@@ -166,7 +167,6 @@ export default {
               resultD: item.result.D,
             }
           })
-          console.log(111111111111111111111111111)
         }
       } catch (err) {
         ElMessage.error(err.toString());

@@ -58,8 +58,8 @@ export default {
     async queryReserve() {
       try {
         const res = await getReserve()
-        if (res?.data?.message_list) {
-          this.tableData = res.data.message_list?.map(item => {
+        if (res?.data) {
+          this.tableData = res.data?.map(item => {
             return {
               id: item.reserve_id,
               status: item.reserve_status,
@@ -71,7 +71,6 @@ export default {
               phoneNumber: item.phone_number
             }
           })
-          console.log(this.tableData[0])
         }
       } catch (err) {
         ElMessage.error(err.toString());

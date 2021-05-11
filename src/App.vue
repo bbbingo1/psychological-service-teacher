@@ -29,9 +29,9 @@
     <component :is="componentIds[activeIndex - 1]"></component>
   </div>
   <div v-loading="loadingWrap" v-else id="userLogin" :style="setBackground">
-    <el-col class="warp-main" v-loading="loading" element-loading-text="拼命加载中">
+    <el-col class="warp-main">
       <div class="wrap">
-        <form class="login">
+        <form class="login" v-loading="loading" element-loading-text="登录中">
           <p class="title">教师登录</p>
           <input v-model="username" type="text" placeholder="请输入账号" autofocus />
           <i class="fa fa-user"></i>
