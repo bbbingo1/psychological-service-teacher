@@ -1,7 +1,11 @@
 import axios from 'axios'
 // import Qs from "qs";
-
-const prefix = '/api'
+let prefix
+if ((process.env.NODE_ENV === 'development')) {
+  prefix = '/api'
+} else {
+  prefix = '';
+}
 
 //查看登录状态
 export async function getLoginStatus() {
