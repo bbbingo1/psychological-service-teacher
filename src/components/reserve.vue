@@ -13,11 +13,16 @@
       </el-table-column>
       <el-table-column align="center" prop="stuId" label="学号" show-overflow-tooltip></el-table-column>
       <el-table-column align="center" prop="stuClass" label="班级" show-overflow-tooltip></el-table-column>
-      <el-table-column align="center" prop="date" label="时间" show-overflow-tooltip></el-table-column>
+      <el-table-column align="center" prop="college" label="学院" show-overflow-tooltip></el-table-column>
+      <el-table-column align="center" prop="grade" label="年级" show-overflow-tooltip></el-table-column>
+      <el-table-column align="center" prop="phoneNumber" label="手机号" show-overflow-tooltip></el-table-column>
       <el-table-column align="center" label="操作">
         <template #default="scope">
-          <el-button size="mini" type="primary" @click="handleComfirm(scope.$index, scope.row)">确认</el-button>
-          <el-button size="mini" type="danger" @click="handleReject(scope.$index, scope.row)">拒绝</el-button>
+          <div v-if="!scope.row.status">
+            <el-button size="mini" type="primary" @click="handleReply(scope.row, 1)">确认</el-button>
+            <el-button size="mini" type="danger" @click="handleReply(scope.row, 2)">拒绝</el-button>
+          </div>
+          <el-button v-else type="text">{{ scope.row.status == 1 ? '已接受' : '已拒绝' }}</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -25,31 +30,57 @@
 </template>
 
 <script>
+import { ElMessage } from 'element-plus'
+import { getReserve, ReplyReserve } from '@/api/request'
+
 export default {
   data() {
     return {
-      tableData: [{
-        name: '学生1',
-        stuId: '学号1',
-        stuClass: '班级1',
-        date: '2020-12-12 14:00:00',
-      }, {
-        name: '学生2',
-        stuId: '学号2',
-        stuClass: '班级2',
-        date: '2020-12-12 14:00:00',
-      }],
+      tableData: [],
     }
   },
 
   methods: {
-    handleComfirm(index, row) {
-      console.log(index, row);
+    async handleReply(row, status) {
+      try {
+        const form = {
+          reserve_id: row.id,
+          reserve_status: status
+        }
+        await ReplyReserve(form);
+        // 更新列表
+        await this.queryReserve()
+        ElMessage.success('操作成功')
+      } catch (err) {
+        ElMessage.error(err.toString());
+      }
     },
-    handleReject(index, row) {
-      console.log(index, row);
-    },
-  }
+    async queryReserve() {
+      try {
+        const res = await getReserve()
+        if (res?.data?.message_list) {
+          this.tableData = res.data.message_list?.map(item => {
+            return {
+              id: item.reserve_id,
+              status: item.reserve_status,
+              name: item.stu_name,
+              stuId: item.stu_id,
+              stuClass: item.stu_class,
+              college: item.college,
+              grade: item.grade,
+              phoneNumber: item.phone_number
+            }
+          })
+          console.log(this.tableData[0])
+        }
+      } catch (err) {
+        ElMessage.error(err.toString());
+      }
+    }
+  },
+  async beforeMount() {
+    await this.queryReserve()
+  },
 }
 </script>
 <style lang="scss">

@@ -57,26 +57,12 @@
 
 <script>
 import { ElMessage } from 'element-plus'
-import { addQuestion, deleteQuestion } from '@/api/request'
+import { addQuestion, deleteQuestion, getQuestion } from '@/api/request'
 
 export default {
   data() {
     return {
-      tableData: [{
-        name: '研发谁最丑（单选且只有一个正确答案）',
-        id: 1,
-        resultA: 'liyan',
-        resultB: 'yuanjiance',
-        resultC: 'liyan',
-        resultD: 'liyan',
-      }, {
-        name: '研发谁最帅（单选且只有一个正确答案）',
-        id: 2,
-        resultA: 'runjia',
-        resultB: 'runjia',
-        resultC: 'zebin',
-        resultD: 'runjia',
-      }],
+      tableData: [],
       multipleSelection: [],
       dialogFormVisible: false,
       form: {
@@ -132,7 +118,9 @@ export default {
       }
       try {
         await deleteQuestion(question_ids)
-        // TODO：更新题目列表
+        // 更新题目列表
+        await this.queryQuestion()
+        ElMessage.success('删除成功')
       } catch (err) {
         ElMessage.error(err.toString());
       }
@@ -141,8 +129,19 @@ export default {
       this.$refs.ruleForm.validate(async (valid) => {
         if (valid) {
           try {
-            await addQuestion(this.form);
-            // TODO：更新题目列表
+            const form = {
+              question: this.form.name,
+              result: {
+                A : this.form.resultA,
+                B : this.form.resultB,
+                C : this.form.resultC,
+                D : this.form.resultD,
+              }
+            }
+            await addQuestion(form);
+            // 更新题目列表
+            await this.queryQuestion()
+            ElMessage.success('添加成功')
           } catch (err) {
             ElMessage.error(err.toString());
           }
@@ -151,8 +150,32 @@ export default {
           return false;
         }
       });
+    },
+    async queryQuestion() {
+      try {
+        const res = await getQuestion()
+        if (res?.data?.question_list) {
+          const data = res.data.question_list?.filter(item => item.status == 1)
+          this.tableData = data?.map(item => {
+            return {
+              id: item.question_id,
+              name: item.question,
+              resultA: item.result.A,
+              resultB: item.result.B,
+              resultC: item.result.C,
+              resultD: item.result.D,
+            }
+          })
+          console.log(111111111111111111111111111)
+        }
+      } catch (err) {
+        ElMessage.error(err.toString());
+      }
     }
-  }
+  },
+  async beforeMount() {
+    await this.queryQuestion()
+  },
 }
 </script>
 <style lang="scss">

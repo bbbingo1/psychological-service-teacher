@@ -79,11 +79,15 @@ export default {
     async handleComfirm() {
       if (this.replyInput) {
         try {
-          await ReplyStudentMessage(this.replyRow.messageId)
-          //更新题目列表
+          const form = {
+            message_id: this.replyRow.messageId,
+            reply: this.replyInput
+          }
+          await ReplyStudentMessage(form)
+          //更新留言列表
           await this.queryMessage()
-
           this.dialogVisible2 = false
+          ElMessage.success('处理成功')
         } catch (err) {
           ElMessage.error(err.toString());
         }

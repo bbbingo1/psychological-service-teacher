@@ -115,7 +115,9 @@ export default {
         this.username = res?.data?.username
       }
     } catch (err) {
-      ElMessage.error(err.toString());
+      this.isLogin = false
+      this.loadingWrap = false
+      // ElMessage.error(err.toString());
     }
   },
 }
@@ -280,17 +282,6 @@ $primary: #ff9999;
 .warp-main {
   float: initial;
   margin-top: 25vh;
-}
-
-.wrapper {
-  background-color: #e9e9e9;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  position: absolute;
-  clear: both;
-  z-index: 3;
-  opacity: 0.5;
 }
 
 input:-webkit-autofill,
