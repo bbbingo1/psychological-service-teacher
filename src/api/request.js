@@ -67,12 +67,13 @@ export async function addQuestion(form) {
 
 //删除测试题
 export async function deleteQuestion(question_ids) {
+  const form = { question_ids: question_ids }
   const url = prefix + '/teacher/question/'
   try {
     const res = await axios({
       method: 'delete',
       url: url,
-      data: question_ids
+      data: form
     });
     return await Promise.resolve(res.data);
   } catch (err) {
